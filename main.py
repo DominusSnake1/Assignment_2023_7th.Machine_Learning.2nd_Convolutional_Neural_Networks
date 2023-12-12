@@ -1,4 +1,5 @@
 from Classes.MLProjectToDataset import MLProject2Dataset
+import torch
 from torch.utils.data import random_split
 
 
