@@ -1,40 +1,38 @@
 import os
 import pandas as pd
-from torch.utils.data import Dataset
 from PIL import Image
-import glob
+import torch
+from torch.utils.data import Dataset
+from Classes.Transformations import Transformations
 
 
 class MLProject2Dataset(Dataset):
-    def __init__(self, data_dir, metadata_fname='metadata.csv', transform=None):
+    def __init__(self, data_dir, metadata_fname='metadata.csv'):
         self.data_dir = data_dir
-        self.transform = transform
+        self.transform = Transformations(m=128, n=128)
 
-        image_paths = glob.glob(os.path.join(data_dir, '*.jpg'))
-        image_ids = [os.path.splitext(os.path.basename(path))[0] for path in image_paths]
-
-        self.data_info = pd.DataFrame({
-            'image_id': image_ids,
-            'path': image_paths
-        })
-
+        # Read metadata
         metadata_path = os.path.join(data_dir, metadata_fname)
         metadata = pd.read_csv(metadata_path)
-
         metadata['dx'] = pd.Categorical(metadata['dx']).codes
 
-        self.data_info = pd.merge(self.data_info, metadata[['image_id', 'dx']], on='image_id')
+        # Create DataFrame with image paths and labels
+        image_paths = [os.path.join(data_dir, f) for f in metadata['image_id']]
+        labels = metadata['dx']
+        self.data = pd.DataFrame({'path': image_paths, 'label': labels})
 
     def __len__(self):
-        return len(self.data_info)
+        return len(self.data)
 
-    def __getitem__(self, index):
-        img_path = self.data_info.iloc[index, 0]
-        image = Image.open(img_path).convert('RGB')
+    def __getitem__(self, idx):
+        img_path = self.data.iloc[idx, 0]
+        label = torch.tensor(self.data.iloc[idx, 1], dtype=torch.long)
 
-        label = int(self.data_info.iloc[index, 2])
+        # Load image
+        img = Image.open(img_path).convert("RGB")
 
-        if self.transform is not None:
-            image = self.transform(image)
+        # Apply transformations
+        if self.transform:
+            img = self.transform(img)
 
-        return image, label
+        return img, label
