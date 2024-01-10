@@ -7,7 +7,7 @@ conda activate py38
 ```
 
 ```bash
-conda install cpuonly -c pytorch --file requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ```bash

@@ -1,8 +1,8 @@
-import os
-import pandas as pd
 from torch.utils.data import Dataset
 from PIL import Image
+import pandas as pd
 import glob
+import os
 
 
 class MLProject2Dataset(Dataset):
@@ -28,11 +28,11 @@ class MLProject2Dataset(Dataset):
     def __len__(self):
         return len(self.data_info)
 
-    def __getitem__(self, index):
-        img_path = self.data_info.iloc[index, 0]
-        image = Image.open(img_path).convert('RGB')
+    def __getitem__(self, idx):
+        img_path = self.data_info.iloc[idx, 1]
+        image = Image.open(img_path).convert("RGB")
 
-        label = int(self.data_info.iloc[index, 2])
+        label = int(self.data_info.iloc[idx, 2])
 
         if self.transform is not None:
             image = self.transform(image)
