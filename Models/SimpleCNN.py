@@ -14,7 +14,7 @@ class SimpleCNN(nn.Module):
         self.relu3 = nn.ReLU()
         self.maxpool3 = nn.MaxPool2d(kernel_size=2, stride=2)
         self.flatten = nn.Flatten()
-        self.fc = nn.Linear(64 * 6 * 8, 2)
+        self.fc = nn.Linear(64 * 6 * 7, 7)
 
     def forward(self, x):
         x = self.conv1(x)

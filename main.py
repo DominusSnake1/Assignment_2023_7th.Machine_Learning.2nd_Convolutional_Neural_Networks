@@ -8,7 +8,7 @@ import torch
 
 def transformation(m, n):
     transform = transforms.Compose([
-        transforms.Resize((m, n)),
+        transforms.Resize((m, n), antialias=True),
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
