@@ -2,9 +2,10 @@ import torch
 
 
 class NetTrainAndTest:
-    def __init__(self, model, trainloader, valloader=None, epochs=10, optimizer=None, loss_fn=None, print_period=10):
+    def __init__(self, model, trainloader, testloader, valloader=None, epochs=10, optimizer=None, loss_fn=None, print_period=10):
         self.model = model
         self.trainloader = trainloader
+        self.testloader = testloader
         self.valloader = valloader
         self.epochs = epochs
         self.optimizer = optimizer
@@ -70,7 +71,7 @@ class NetTrainAndTest:
 
         print('Training finished')
 
-    def test_net(self, testloader):
+    def test_net(self):
         self.model.to(self.device)
         self.model.eval()
 
@@ -78,7 +79,7 @@ class NetTrainAndTest:
         test_accuracy = 0.0
 
         with torch.no_grad():
-            for data in testloader:
+            for data in self.testloader:
                 inputs, labels = data
                 inputs, labels = inputs.to(self.device), labels.to(self.device)
 
@@ -86,8 +87,8 @@ class NetTrainAndTest:
                 test_loss += self.loss_fn(outputs, labels).item()
                 test_accuracy += self.accuracy(outputs, labels)
 
-        avg_test_loss = test_loss / len(testloader)
-        avg_test_accuracy = test_accuracy / len(testloader)
+        avg_test_loss = test_loss / len(self.testloader)
+        avg_test_accuracy = test_accuracy / len(self.testloader)
 
         print(f'Test Loss: {avg_test_loss:.3f}, Test Accuracy: {avg_test_accuracy:.3f}')
 

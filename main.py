@@ -1,19 +1,25 @@
 from Classes.MLProjectToDataset import MLProject2Dataset
-from Classes.NetTrainAndTest import NetTrainAndTest
 from torch.utils.data import random_split, DataLoader
+from Classes.NetTrainAndTest import NetTrainAndTest
+from Models.ComplexCNN import ComplexCNN
 from Models.SimpleCNN import SimpleCNN
-from torchvision import transforms
+from Other.Utils import transformation
+from torchsummary import summary
 import torch
 
 
-def transformation(m, n):
-    transform = transforms.Compose([
-        transforms.Resize((m, n), antialias=True),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-    ])
+def chooseModel(model, train_loader, test_loader, learning_rate):
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
-    return transform
+    trainer = NetTrainAndTest(model=model, trainloader=train_loader,
+                              testloader=test_loader, epochs=20,
+                              optimizer=optimizer, loss_fn=criterion)
+
+    summary(model, (3, 50, 62))
+
+    trainer.train_net()
+    trainer.test_net()
 
 
 def main():
@@ -35,14 +41,11 @@ def main():
     val_loader = DataLoader(val_set, batch_size=64, shuffle=False)
     test_loader = DataLoader(test_set, batch_size=64, shuffle=False)
 
-    model = SimpleCNN()
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+    # Simple CNN
+    chooseModel(model=SimpleCNN(), train_loader=train_loader, test_loader=test_loader, learning_rate=0.1)
 
-    trainer = NetTrainAndTest(model=model, trainloader=train_loader,
-                              epochs=20, optimizer=optimizer, loss_fn=criterion)
-
-    trainer.train_net()
+    # Complex CNN
+    chooseModel(model=ComplexCNN(), train_loader=train_loader, test_loader=test_loader, learning_rate=1e-3)
 
 
 if __name__ == "__main__":
