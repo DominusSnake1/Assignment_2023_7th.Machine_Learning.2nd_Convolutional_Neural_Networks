@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 
 
@@ -77,6 +78,8 @@ class NetTrainAndTest:
 
         test_loss = 0.0
         test_accuracy = 0.0
+        predictions = []
+        true_labels = []
 
         with torch.no_grad():
             for data in self.testloader:
@@ -87,9 +90,17 @@ class NetTrainAndTest:
                 test_loss += self.loss_fn(outputs, labels).item()
                 test_accuracy += self.accuracy(outputs, labels)
 
+                predictions.append(outputs.argmax(dim=1).cpu().numpy())
+                true_labels.append(labels.cpu().numpy())
+
         avg_test_loss = test_loss / len(self.testloader)
         avg_test_accuracy = test_accuracy / len(self.testloader)
 
         print(f'Test Loss: {avg_test_loss:.3f}, Test Accuracy: {avg_test_accuracy:.3f}')
 
+        predictions = np.concatenate(predictions)
+        true_labels = np.concatenate(true_labels)
+
         self.model.train()
+
+        return predictions, true_labels

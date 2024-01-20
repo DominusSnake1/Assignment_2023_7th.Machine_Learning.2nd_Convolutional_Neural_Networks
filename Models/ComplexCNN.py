@@ -31,7 +31,7 @@ class ComplexCNN(nn.Module):
 
         self.global_avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.flatten = nn.Flatten()
-        self.fc = nn.Linear(512, 2)
+        self.fc = nn.Linear(in_features=512, out_features=7)
 
     def forward(self, x):
         x = self.conv1(x)

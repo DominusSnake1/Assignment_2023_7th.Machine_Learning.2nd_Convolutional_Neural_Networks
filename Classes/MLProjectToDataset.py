@@ -1,6 +1,7 @@
-from torch.utils.data import Dataset
+from torch.utils.data import random_split, DataLoader, Dataset
 from PIL import Image
 import pandas as pd
+import torch
 import glob
 import os
 
@@ -38,3 +39,36 @@ class MLProject2Dataset(Dataset):
             image = self.transform(image)
 
         return image, label
+
+
+def split_dataset(dataset):
+    num_data = len(dataset)
+    num_train = int(0.6 * num_data)
+    num_val = int(0.1 * num_data)
+    num_test = num_data - num_train - num_val
+
+    train_set, val_set, test_set = random_split(
+        dataset=dataset,
+        lengths=[num_train, num_val, num_test],
+        generator=torch.Generator().manual_seed(42)
+    )
+
+    train_loader = DataLoader(
+        dataset=train_set,
+        batch_size=64,
+        shuffle=True
+    )
+
+    val_loader = DataLoader(
+        dataset=val_set,
+        batch_size=64,
+        shuffle=False
+    )
+
+    test_loader = DataLoader(
+        dataset=test_set,
+        batch_size=64,
+        shuffle=False
+    )
+
+    return train_loader, val_loader, test_loader
