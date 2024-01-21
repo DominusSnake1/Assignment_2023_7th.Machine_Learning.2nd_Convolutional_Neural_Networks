@@ -4,7 +4,16 @@ import torch
 
 
 class NetTrainAndTest:
-    def __init__(self, model, trainloader, testloader, valloader=None, epochs=10, optimizer=None, loss_fn=None, print_period=10):
+    def __init__(self,
+                 model,
+                 trainloader,
+                 testloader,
+                 valloader=None,
+                 epochs=10,
+                 optimizer=None,
+                 loss_fn=None,
+                 print_period=10):
+
         self.model = model
         self.trainloader = trainloader
         self.testloader = testloader
@@ -15,7 +24,8 @@ class NetTrainAndTest:
         self.device = 'cpu'
         self.print_period = print_period
 
-    def accuracy(self, output, target):
+    @staticmethod
+    def accuracy(output, target):
         _, predicted = torch.max(output, 1)
         correct = (predicted == target).sum().item()
         total = target.size(0)
@@ -46,7 +56,8 @@ class NetTrainAndTest:
                 if i % self.print_period == self.print_period - 1:
                     avg_loss = running_loss / self.print_period
                     avg_accuracy = total_accuracy / self.print_period
-                    print(f'[Epoch {epoch + 1}, Iteration {i + 1}] Average Loss: {avg_loss:.3f}, Average Accuracy: {avg_accuracy:.3f}')
+                    print(
+                        f'[Epoch {epoch + 1}, Iteration {i + 1}] Average Loss: {avg_loss:.3f}, Average Accuracy: {avg_accuracy:.3f}')
                     running_loss = 0.0
                     total_accuracy = 0.0
 
