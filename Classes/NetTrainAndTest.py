@@ -1,4 +1,3 @@
-from torchsummary import summary
 import numpy as np
 import torch
 
@@ -8,8 +7,8 @@ class NetTrainAndTest:
                  model,
                  trainloader,
                  testloader,
+                 epochs,
                  valloader=None,
-                 epochs=10,
                  optimizer=None,
                  loss_fn=None,
                  print_period=10):
@@ -56,8 +55,7 @@ class NetTrainAndTest:
                 if i % self.print_period == self.print_period - 1:
                     avg_loss = running_loss / self.print_period
                     avg_accuracy = total_accuracy / self.print_period
-                    print(
-                        f'[Epoch {epoch + 1}, Iteration {i + 1}] Average Loss: {avg_loss:.3f}, Average Accuracy: {avg_accuracy:.3f}')
+                    print(f'[Epoch {epoch + 1}, Iteration {i + 1}] Average Loss: {avg_loss:.3f}, Average Accuracy: {avg_accuracy:.3f}')
                     running_loss = 0.0
                     total_accuracy = 0.0
 
@@ -117,17 +115,15 @@ class NetTrainAndTest:
         return predictions, true_labels
 
 
-def train_model(model, train_loader, test_loader, epochs, learning_rate):
+def train_model(model, train_loader, test_loader, epochs, learning_rate, momentum=0):
     trainer = NetTrainAndTest(
         model=model,
         trainloader=train_loader,
         testloader=test_loader,
         epochs=epochs,
-        optimizer=torch.optim.SGD(model.parameters(), lr=learning_rate),
+        optimizer=torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=momentum),
         loss_fn=torch.nn.CrossEntropyLoss()
     )
-
-    summary(model, (3, 50, 62))
 
     trainer.train_net()
     predictions, true_labels = trainer.test_net()
