@@ -7,7 +7,7 @@ conda activate py38
 ```
 
 ```bash
-pip3 install -r requirements.txt
+pip3 install -r ./Other/requirements.txt
 ```
 
 ```bash

@@ -20,7 +20,7 @@ class NetTrainAndTest:
         self.epochs = epochs
         self.optimizer = optimizer
         self.loss_fn = loss_fn
-        self.device = 'cpu'
+        self.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
         self.print_period = print_period
 
     @staticmethod

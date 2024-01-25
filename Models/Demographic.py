@@ -36,8 +36,8 @@ class Demographic(nn.Module):
         demographic_features = self.demographic_fc(demographic_features)
         demographic_features = self.relu(demographic_features)
 
-        combined_features = torch.cat([image_features, demographic_features], dim=1)
+        x = torch.cat([image_features, demographic_features], dim=1)
 
-        output = self.final_fc(combined_features)
+        x = self.final_fc(x)
 
-        return output
+        return x
